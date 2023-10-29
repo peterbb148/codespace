@@ -1,0 +1,29 @@
+To obtain the number of lines of code added to a repository within a specific time frame, you can use GitHub's REST API to fetch data on the repository's activity. Here are some approaches:
+
+1. **Weekly Commit Activity**:
+   - GitHub provides a way to get a weekly aggregate of the number of additions and deletions pushed to a repository via the `Get the weekly commit activity` endpoint. By sending a GET request to `https://api.github.com/repos/{owner}/{repo}/stats/code_frequency`, you'll receive a response containing an array of weekly data, where each entry consists of the week's timestamp, the number of lines added, and the number of lines deleted [oai_citation:1,Repository statistics - GitHub Docs](https://docs.github.com/en/rest/metrics/statistics).
+
+2. **Custom Git Commands**:
+   - If you have access to the repository locally or are able to clone it, you can use git commands to calculate the number of lines changed between two commits. For example, the following command can be used to get the total changes between two commits: 
+     ```bash
+     git log --numstat --pretty="%H" --author="Your Name" commit1..commit2 | awk 'NF==3 {plus+=$1; minus+=$2} END {printf ("+%d, -%d\n", plus, minus)}'
+     ```
+     This command will give you the total number of lines added and deleted between `commit1` and `commit2` [oai_citation:2,How can I calculate the number of lines changed between two commits in Git?](https://stackoverflow.com/questions/2528111/how-can-i-calculate-the-number-of-lines-changed-between-two-commits-in-git#:~:text=Here%27s%20a%20one,d%5Cn%22%2C%20plus%2C%20minus).
+
+3. **GitHub Statistics API**:
+   - Though not directly giving you the lines of code added within a specific timeframe, the GitHub Statistics API can provide an approximation of the total lines of code in a repository without needing to clone it [oai_citation:3,Count number of lines in a GitHub repository without cloning](https://stackoverflow.com/questions/35932418/count-number-of-lines-in-a-github-repository-without-cloning#:~:text=For%20GitHub%20specifically%2C%20you%20have,not%20involve%20cloning%20the%20repo).
+
+4. **Insights Tab on GitHub**:
+   - On GitHub, you can navigate to the Insights tab of your project, then click on Contributors. This section displays the number of commits, additions, and deletions over any period of time you want, albeit this is a manual method and not through the API [oai_citation:4,git - How to count number of code lines created by every user in github ...](https://stackoverflow.com/questions/59950098/how-to-count-number-of-code-lines-created-by-every-user-in-github-repo#:~:text=On%20your%20project%2C%20go%20to,Share).
+
+5. **Additional Scripts or Tools**:
+   - Some discussions on Stack Overflow suggest creating a script to process repository data to find the number of lines of code modified within a certain amount of days. This might involve using the GitHub API to fetch relevant data and then processing it to obtain the specific statistics you're interested in [oai_citation:5,Get number of lines of code modified from GitHub repository](https://stackoverflow.com/questions/56362451/get-number-of-lines-of-code-modified-from-github-repository).
+
+The first method via the GitHub REST API might suit your needs the best if you're looking to automate this process and gather data programmatically over a specific time frame.
+
+
+curl -L \
+  -H "Accept: application/vnd.github+json" \
+  -H "Authorization: Bearer " \
+  -H "X-GitHub-Api-Version: 2022-11-28" \
+  https://api.github.com/repos/Peterbb148/towerchess/stats/commit_activity
